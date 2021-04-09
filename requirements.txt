@@ -1,4 +1,4 @@
-matplotlib.pyplot
+matplotlib==3.2.2
 numpy
 PIL
 pandas
