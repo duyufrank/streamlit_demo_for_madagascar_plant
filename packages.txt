@@ -1,1 +1,6 @@
-matplotlib
+matplotlib.pyplot
+numpy
+PIL
+pandas
+datetime
+plotly.express
