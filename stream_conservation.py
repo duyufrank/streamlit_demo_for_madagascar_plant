@@ -115,7 +115,7 @@ if select=='Conservation-360':
     st.markdown('### Conservation-360 always work with you!!')
     select_con = st.selectbox(
     'See our accomplishment',
-    ('natural observation','seed collection', 'transplanting process', 'natural observation')
+    ('natural observation','seed collection', 'transplanting process')
     )
     if select_con == 'natural observation':
         naturalist_data = pd.read_csv("iNaturalist - observations-131984.csv")
