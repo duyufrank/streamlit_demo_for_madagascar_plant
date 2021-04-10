@@ -27,7 +27,7 @@ df1['date']= (df1['Year']).apply(lambda x:datetime.strptime(x,'%Y'))
 #
 st.set_page_config(layout="wide")
 image = Image.open('logo.png')
-st.image(image,width=1000,height=200)
+st.image(image,width=1000)
 st.markdown('# Conservation360  DashBoard')
 
 select = st.sidebar.selectbox(
