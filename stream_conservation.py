@@ -259,7 +259,7 @@ if select=='Madagascar':
                 go.Scatter(x=mdg_region[region].index,y= mdg_region[region][i],name=i),
                 row=1, col=2)
         fig.update_layout(title='Comparison of <b>Fianarantsoa</b> and <b>'+region,legend=dict(orientation="h",x=0.1,y=-0.1),
-            xaxis=dict(title='Year',nticks=5),xaxis2=dict(title='Year',nticks=5),
+            xaxis=dict(nticks=5),xaxis2=dict(nticks=5),
             yaxis_title='Index',yaxis2_title='Index',width=1000)
         st.write(fig)
     
