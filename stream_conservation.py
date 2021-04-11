@@ -9,7 +9,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-import PIL
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import pandas as pd
 from datetime import datetime
 import plotly.express as px
@@ -205,6 +206,62 @@ if select=='Conservation-360':
 
 if select=='Madagascar':
     st.markdown('## Madagascar')
+    select_mdg = st.selectbox('About Mdagascar',('Income','Environment'))
+    if select_mdg == 'Income':
+        wdbincome = pd.read_csv(r'./madagascar/Income per capita WB.csv').iloc[:2,[0]+list(range(4,22))]
+        wdbincome.columns = ['country']+[i[i.find('20'):i.find('20')+4] for i in wdbincome.columns[1:]]
+        wdbincome = wdbincome.set_index('country').T
+        fig = go.Figure(data=[
+            go.Scatter(name='United States', x=wdbincome.index, y=wdbincome['United States']),
+            go.Scatter(name='Madagascar', x=wdbincome.index, y=wdbincome['Madagascar'])
+            ])
+        fig.update_layout(title='National Income of USA and Madagascar per Capita(USD)',title_x=.5,width=1000,xaxis_title='Year')
+        st.write(fig)
+        income = pd.read_excel(r'./madagascar/Localized (ranomafana) Households Income.xls').iloc[3:9,1:7]
+        income = income.reset_index()
+        income.columns = list(income.iloc[0][:-1])+['Yearly Income(USD)']
+        income = income.iloc[1:,1:].sort_values(by='Yearly Income(USD)',ascending=False)
+        fig = px.bar(income, x='Crops', y='Yearly Income(USD)',title='Localized (ranomafana) household income mainly depends on <b>coffee')
+        fig.update_traces(marker_color=['red','blue','blue','blue','blue'])
+        fig.update_layout(title_x=0.5,width=1000)
+        st.write(fig)
+    if select_mdg == 'Environment':
+        mdg = [pd.read_excel(r'./madagascar/MDG.xlsx',sheet_name=i) for i in range(1,7)]
+        mdg = [i[i['threshold']==10] for i in mdg]
+        mdg_con = mdg[:3]
+        con_select = [0]+list(range(6,len(mdg_con[0].columns)))
+        mdg_con = [i.iloc[:,con_select] for i in mdg_con]
+        mdg_sub = mdg[3:]
+        sub_select = [i+1 for i in con_select]
+        mdg_sub = [i.iloc[:,sub_select] for i in mdg_sub]
+        mdg = mdg_sub+mdg_con
+        col_name = ['Area']+[i[i.find('20'):i.find('20')+4] for i in mdg_sub[0].columns[1:]]
+        for i in mdg:
+            i.columns = col_name
+        mdg = [i.set_index('Area').T for i in mdg]
+        mdg = [pd.concat([mdg[i],mdg[i+3]],axis=1) for i in range(3)]
+        mdg_region = {i:pd.concat([mdg[0][i],mdg[1][i],mdg[2][i]],axis=1) for i in mdg[0].columns}
+        for i in mdg_region:
+            mdg_region[i].columns = ['Hectares of tree cover loss','Metric tonnes of aboveground biomass loss','Metric tonnes of CO2 emissions']
+            mdg_region[i]['Tree cover loss index'] = round(100*mdg_region[i]['Hectares of tree cover loss']/mdg_region[i]['Hectares of tree cover loss'][0],2)
+            mdg_region[i]['Biomass loss index'] = round(100*mdg_region[i]['Metric tonnes of aboveground biomass loss']/mdg_region[i]['Metric tonnes of aboveground biomass loss'][0],2)
+            mdg_region[i]['CO2 emission index'] = round(100*mdg_region[i]['Metric tonnes of CO2 emissions']/mdg_region[i]['Metric tonnes of CO2 emissions'][0],2)
+        region_list = list(mdg_region.keys())
+        region = st.selectbox('The Region You Want to Compare with',region_list)
+        fig = make_subplots(rows=1, cols=2,subplot_titles=['Fianarantsoa',region])
+        for i in mdg_region['Fianarantsoa'].columns[-3:-1]:
+            fig.add_trace(
+                go.Scatter(x=mdg_region['Fianarantsoa'].index,y= mdg_region['Fianarantsoa'][i],name=i),
+                row=1, col=1)
+
+        for i in mdg_region[region].columns[-3:-1]:
+            fig.add_trace(
+                go.Scatter(x=mdg_region[region].index,y= mdg_region[region][i],name=i),
+                row=1, col=2)
+        fig.update_layout(title='Comparison of <b>Fianarantsoa</b> and <b>'+region,legend=dict(orientation="h",x=0.1,y=1.15),
+            xaxis=dict(title='Year',nticks=5),xaxis2=dict(title='Year',nticks=5),
+            yaxis_title='Index',yaxis2_title='Index',width=1000)
+        st.write(fig)
     
     
 
