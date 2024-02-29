@@ -1,7 +1,3 @@
 # streamlit-demo
 
-Create a generic Streamlit template
-
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:.
-
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community forums](https://discuss.streamlit.io).
+This file creates an interactive dashboard for growing plant. The dashboards includes the description of donors, conservation360 and environment in madagascar
